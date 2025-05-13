@@ -55,7 +55,7 @@ const Storage = (dir) => {
 const studentUploader = multer({storage: Storage('resources/students')})
 const teacherUploader = multer({storage: Storage('resources/teachers')})
 const staffUploader = multer({storage: Storage('resources/staffs')})
-const logoUploader = multer({storage: Storage('resources/logo')})
+const logoUploader = multer({storage: Storage('resources/inst')})
 
 
 
