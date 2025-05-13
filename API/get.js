@@ -799,36 +799,32 @@ router.get("/image2/:folder/:file", (req, res) => {
 router.get("/image/:folder/:file", (req, res) => {
   const folder = req.params.folder;
   const fileName = req.params.file;
-  let dirname = __dirname.split("\\");
-  dirname.pop();
+  
+  // Go up one level from current directory then into resources
+  const resourcesDir = path.join(__dirname, '..', 'resources', folder);
 
-  const resourcesDir = path.join(dirname.join("\\"), "resources", folder);
-
-  const searchFile = (dir) => {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        const found = searchFile(filePath);
-        if (found) {
-          return found;
-        }
-      } else if (file.split(".")[0] === fileName) {
-        return filePath;
-      }
+  try {
+    // Check if directory exists
+    if (!fs.existsSync(resourcesDir)) {
+      return res.status(404).send({ error: "Directory not found" });
     }
-    return null;
-  };
 
-  // Search for the file
-  const filePath = searchFile(resourcesDir);
+    // Search for file
+    const files = fs.readdirSync(resourcesDir);
+    const foundFile = files.find(file => 
+      file.split('.')[0] === fileName || file === fileName
+    );
 
-  // Respond with the file if found
-  if (filePath) {
+    if (!foundFile) {
+      return res.status(404).send({ error: "File not found" });
+    }
+
+    const filePath = path.join(resourcesDir, foundFile);
     res.sendFile(filePath);
-  } else {
-    res.status(404).send({ error: "Image not found." });
+    
+  } catch (err) {
+    console.error('Error serving image:', err);
+    res.status(500).send({ error: "Internal server error" });
   }
 });
 
