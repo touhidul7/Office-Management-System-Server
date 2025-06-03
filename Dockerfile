@@ -4,15 +4,23 @@ FROM node:18-alpine
 # Set working directory inside container
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package.json and package-lock.json (if present)
 COPY package*.json ./
-RUN npm install --production
 
-# Copy remaining source code
+# Install ALL dependencies (including devDependencies)
+RUN npm install
+
+# Copy Prisma schema before running prisma generate
+COPY prisma ./prisma
+
+# Run postinstall (will trigger prisma generate)
+RUN npm run postinstall
+
+# Copy the rest of the application code
 COPY . .
 
-# Expose your app port (default: 3000, update if needed)
+# Expose port
 EXPOSE 3000
 
-# Start the server
+# Start server
 CMD ["node", "index.js"]
