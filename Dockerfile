@@ -20,7 +20,7 @@ RUN npx prisma generate
 COPY . .
 
 # Expose server port
-EXPOSE 3000
+EXPOSE 5000
 
 # Start the server
 CMD ["node", "index.js"]
