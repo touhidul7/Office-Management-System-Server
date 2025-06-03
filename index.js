@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 5000
 
 
 app.use(cors({
-  origin: ['*'],
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://britto-oms.vercel.app', 'http://192.168.1.2:5173', 'https://britto-oms.netlify.app', 'https://office-management-system-frontend.vercel.app', 'http://127.0.0.1:5500'],
   credentials: true,
 }))
 
