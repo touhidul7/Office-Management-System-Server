@@ -1,26 +1,26 @@
-# Use Node.js LTS base image
-FROM node:18-alpine
+# Use Debian-based Node.js image instead of Alpine
+FROM node:18
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if present)
+# Copy package files
 COPY package*.json ./
 
-# Install ALL dependencies (including devDependencies)
+# Install all dependencies (including dev)
 RUN npm install
 
-# Copy Prisma schema before running prisma generate
+# Copy Prisma schema (needed before prisma generate)
 COPY prisma ./prisma
 
-# Run postinstall (will trigger prisma generate)
-RUN npm run postinstall
+# Generate Prisma client
+RUN npx prisma generate
 
-# Copy the rest of the application code
+# Copy all source code
 COPY . .
 
-# Expose port
+# Expose server port
 EXPOSE 3000
 
-# Start server
+# Start the server
 CMD ["node", "index.js"]
